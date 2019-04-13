@@ -20,9 +20,17 @@ class Counter extends PureComponent {
   static MAXCNT = 20;
   static MINCNT = 0;
 
-  increase = () => this.props.dispatch({ type: 'INC' });
+  increase = () => {
+    if (this.props.cnt < Counter.MAXCNT) {
+      this.props.dispatch({ type: 'INC' })
+    }
+  };
 
-  decrease = () => this.props.dispatch({ type: 'DEC' });
+  decrease = () => {
+    if (this.props.cnt > Counter.MINCNT) {
+      this.props.dispatch({ type: 'DEC' })
+    }
+  };
 
   render() {
     return (
