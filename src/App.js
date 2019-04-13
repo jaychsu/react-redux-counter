@@ -47,14 +47,13 @@ const logger = store => next => action => {
 }
 
 const errorCatcher = store => next => action => {
-  const state = store.getState()
-
-  if (state.env.errorMsg) {
-    throw new Error(state.env.errorMsg)
-  }
-
   try {
-    return next(action)
+    const res = next(action)
+    const state = store.getState()
+
+    if (state.env.errorMsg) { throw new Error(state.env.errorMsg) }
+
+    return res
   } catch (err) {
     throw err
   }
