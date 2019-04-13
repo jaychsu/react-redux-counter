@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import { connect } from 'react-redux';
 
 const displayAsRow = {
   display: 'flex',
@@ -15,17 +16,13 @@ const styleCount = {
   fontSize: 40,
 }
 
-export default class Counter extends PureComponent {
-  MAXCNT = 20
-  MINCNT = 0
+class Counter extends PureComponent {
+  static MAXCNT = 20;
+  static MINCNT = 0;
 
-  state = {
-    cnt: 0
-  }
+  increase = () => this.props.dispatch({ type: 'INC' });
 
-  increase = () => this.setState({ cnt: Math.min(this.state.cnt + 1, this.MAXCNT) })
-
-  decrease = () => this.setState({ cnt: Math.max(this.state.cnt - 1, this.MINCNT) })
+  decrease = () => this.props.dispatch({ type: 'DEC' });
 
   render() {
     return (
@@ -33,10 +30,14 @@ export default class Counter extends PureComponent {
         <h2 style={styleTitle}>Counter</h2>
         <div style={displayAsRow}>
           <button onClick={this.decrease}>-</button>
-          <div style={styleCount}>{this.state.cnt}</div>
+          <div style={styleCount}>{this.props.cnt}</div>
           <button onClick={this.increase}>+</button>
         </div>
       </div>
     )
   }
 }
+
+export default connect(state => ({
+  cnt: state.cnt
+}))(Counter)
