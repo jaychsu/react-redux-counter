@@ -1,13 +1,21 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux';
 
+const displayAsCol = {
+  display: 'flex',
+  flexDirection: 'column',
+}
+
 const displayAsRow = {
   display: 'flex',
   alignItems: 'center',
+  marginTop: 40,
+  marginBottom: 40,
 }
 
 const styleTitle = {
   textAlign: 'center',
+  margin: 0,
 }
 
 const styleCount = {
@@ -32,20 +40,28 @@ class Counter extends PureComponent {
     }
   };
 
+  forceError = () => {
+    this.props.dispatch({
+      type: 'THROW_ERROR',
+      errorMsg: 'Nothing, just test this catcher. Having fun!',
+    })
+  }
+
   render() {
     return (
-      <div>
+      <div style={displayAsCol}>
         <h2 style={styleTitle}>Counter</h2>
         <div style={displayAsRow}>
           <button onClick={this.decrease}>-</button>
           <div style={styleCount}>{this.props.cnt}</div>
           <button onClick={this.increase}>+</button>
         </div>
+        <button onClick={this.forceError}>kick an error!</button>
       </div>
     )
   }
 }
 
 export default connect(state => ({
-  cnt: state.cnt
+  cnt: state.counter.cnt
 }))(Counter)

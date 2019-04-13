@@ -1,27 +1,28 @@
 import React, { Component } from 'react';
 
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 
 import Counter from './Counter'
 
 import './App.css';
 
-const initState = {
-  cnt: 0,
-};
+const env = (state = {
+  errorMsg: '',
+}, action) => {
+  if (action.type === 'THROW_ERROR') {
+    return {
+      ...state,
+      errorMsg: action.errorMsg,
+    }
+  }
 
-/**
- * import { createStore, combineReducers, applyMiddleware } from 'redux'
- *
- * const todoApp = combineReducers(reducers)
- * const store = createStore(
- *   todoApp,
- *   // applyMiddleware() tells createStore() how to handle middleware
- *   applyMiddleware(logger, crashReporter)
- * )
- */
-const reducer = (state = initState, action) => {
+  return state
+}
+
+const counter = (state = {
+  cnt: 0,
+}, action) => {
   switch (action.type) {
     case 'INC':
       return {
@@ -46,6 +47,12 @@ const logger = store => next => action => {
 }
 
 const errorCatcher = store => next => action => {
+  const state = store.getState()
+
+  if (state.env.errorMsg) {
+    throw new Error(state.env.errorMsg)
+  }
+
   try {
     return next(action)
   } catch (err) {
@@ -53,7 +60,10 @@ const errorCatcher = store => next => action => {
   }
 }
 
-const store = createStore(reducer, applyMiddleware(logger, errorCatcher));
+const store = createStore(
+  combineReducers({ env, counter }),
+  applyMiddleware(logger, errorCatcher)
+);
 
 class App extends Component {
   render() {
