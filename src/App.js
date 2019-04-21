@@ -3,10 +3,13 @@ import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 
+import thunk from 'redux-thunk';
+
 import Counter from './Counter'
 
 import './App.css';
 
+// reducers
 const env = (state = {
   errorMsg: '',
 }, action) => {
@@ -39,6 +42,15 @@ const counter = (state = {
   }
 };
 
+const motto = (state = '', action) => {
+  if (action.type === 'FETCH_MOTTO') {
+    return action.motto
+  }
+
+  return state
+}
+
+// middleware
 const logger = store => next => action => {
   console.log('dispatching', action)
   const res = next(action)
@@ -59,9 +71,10 @@ const errorCatcher = store => next => action => {
   }
 }
 
+// init
 const store = createStore(
-  combineReducers({ env, counter }),
-  applyMiddleware(logger, errorCatcher)
+  combineReducers({ env, counter, motto }),
+  applyMiddleware(thunk, logger, errorCatcher)
 );
 
 class App extends Component {
